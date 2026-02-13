@@ -13,8 +13,12 @@ Usage:
 import asyncio
 import json
 import time
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+# Ensure the 'src' directory is in the path for local imports (config, eval_dataset, etc.)
+sys.path.append(str(Path(__file__).resolve().parent))
 
 # LangChain Imports for Generation
 from langchain_community.chat_models import ChatOllama
@@ -27,7 +31,7 @@ from langchain_core.documents import Document
 # Reranking
 from flashrank import Ranker
 from langchain_community.document_compressors import FlashrankRerank
-from langchain.retrievers import ContextualCompressionRetriever
+from langchain.retrievers.contextual_compression import ContextualCompressionRetriever
 
 # RAGAS Imports
 from ragas.llms import llm_factory
@@ -192,6 +196,10 @@ async def run_evaluation():
         result["ground_truth"] = entry["ground_truth"]
         result["source_file"] = entry["source_file"]
         rag_results.append(result)
+
+    # --- Cleanup before Evaluation ---
+    import gc
+    gc.collect()
 
     # --- Initialize RAGAS Metrics ---
     print(f"[3/4] Initializing RAGAS evaluator with Local LLM ({settings.local_llm_model})...")
