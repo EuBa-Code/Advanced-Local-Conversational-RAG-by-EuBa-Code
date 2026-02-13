@@ -31,7 +31,6 @@ from langchain_core.documents import Document
 # Reranking
 from flashrank import Ranker
 from langchain_community.document_compressors import FlashrankRerank
-from langchain.retrievers.contextual_compression import ContextualCompressionRetriever
 
 # RAGAS Imports
 from ragas.llms import llm_factory
@@ -77,11 +76,6 @@ def build_rag_pipeline(settings):
 
     ranker_client = Ranker(
         model_name=RERANKER_MODEL_NAME, cache_dir=RERANKER_CACHE_DIR
-    )
-    compressor = FlashrankRerank(client=ranker_client, top_n=RERANKER_TOP_N)
-
-    compression_retriever = ContextualCompressionRetriever(
-        base_compressor=compressor, base_retriever=base_retriever
     )
 
     print(f"    Using Local LLM for Generation: {settings.local_llm_model}")
@@ -202,24 +196,35 @@ async def run_evaluation():
     gc.collect()
 
     # --- Initialize RAGAS Metrics ---
-    print(f"[3/4] Initializing RAGAS evaluator with Local LLM ({settings.local_llm_model})...")
+    print(f"[3/4] Initializing RAGAS evaluator with Local LLM (llama3.1:8b)...")
     
-    # Use LangChain wrapper for RAGAS (ignoring deprecation for stability)
-    from ragas.llms import LangchainLLMWrapper
-    
-    evaluator_llm_lc = ChatOllama(
-        model=settings.local_llm_model,
-        base_url=settings.ollama_base_url,
-        temperature=0.0,
+    from ragas.llms import llm_factory
+    from ragas.embeddings import LangchainEmbeddingsWrapper
+    from openai import AsyncOpenAI
+    import math
+
+    # Ollama provides an OpenAI-compatible endpoint at /v1.
+    # We use AsyncOpenAI because RAGAS metrics use agenerate() by default.
+    openai_client = AsyncOpenAI(
+        base_url=f"{settings.ollama_base_url}/v1",
+        api_key="ollama",
+        timeout=180.0,
     )
     
-    evaluator_llm = LangchainLLMWrapper(evaluator_llm_lc)
+    # Use llm_factory to create a RAGAS-compatible Instructor LLM
+    evaluator_llm = llm_factory(
+        model="llama3.1:8b", 
+        client=openai_client
+    )
+    
+    # Wrap our local embeddings for RAGAS
+    evaluator_embeddings = LangchainEmbeddingsWrapper(dense_embeddings)
 
     faithfulness_scorer = Faithfulness(llm=evaluator_llm)
-    context_precision_scorer = ContextPrecision(llm=evaluator_llm)
+    context_precision_scorer = ContextPrecision(llm=evaluator_llm, embeddings=evaluator_embeddings)
 
     # --- Evaluate ---
-    print(f"[4/4] Evaluating with RAGAS metrics...")
+    print(f"[4/4] Evaluating with RAGAS metrics (this may take a few minutes)...")
     evaluation_results = []
 
     for i, sample in enumerate(rag_results, start=1):
@@ -229,6 +234,11 @@ async def run_evaluation():
             scores = await evaluate_single_sample(
                 faithfulness_scorer, context_precision_scorer, sample
             )
+            # Log individual scores to see if they are nan
+            f_val = scores.get("faithfulness")
+            cp_val = scores.get("context_precision")
+            print(f"    - Faithfulness: {_fmt(f_val)} | Context Precision: {_fmt(cp_val)}")
+            
         except Exception as e:
             print(f"    ERROR scoring sample: {e}")
             scores = {"faithfulness": None, "context_precision": None}
@@ -245,15 +255,22 @@ async def run_evaluation():
         )
 
     # --- Aggregate and Save ---
+    import math
+    def clean_score(val):
+        """Helper to handle None and NaN values from RAGAS."""
+        if val is None or (isinstance(val, float) and math.isnan(val)):
+            return None
+        return val
+
     faithfulness_scores = [
-        r["scores"]["faithfulness"]
+        clean_score(r["scores"]["faithfulness"])
         for r in evaluation_results
-        if r["scores"]["faithfulness"] is not None
+        if clean_score(r["scores"]["faithfulness"]) is not None
     ]
     context_precision_scores = [
-        r["scores"]["context_precision"]
+        clean_score(r["scores"]["context_precision"])
         for r in evaluation_results
-        if r["scores"]["context_precision"] is not None
+        if clean_score(r["scores"]["context_precision"]) is not None
     ]
 
     aggregate = {
@@ -268,7 +285,8 @@ async def run_evaluation():
             else None
         ),
         "total_questions": len(evaluation_results),
-        "model_used": f"Local Ollama ({settings.local_llm_model})",
+        "questions_scored": len(faithfulness_scores),
+        "model_used": "Llama 3.1 8B (Eval) / Llama 3.2 (Gen)",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -305,7 +323,8 @@ async def run_evaluation():
 
 def _fmt(value) -> str:
     """Format a score value for display."""
-    if value is None:
+    import math
+    if value is None or (isinstance(value, float) and math.isnan(value)):
         return "N/A"
     return f"{value:.4f}"
 
