@@ -1,0 +1,30 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# API Keys and sensitive data
+.env
+
+# Logs and temporary files
+*.log
+test_input.txt
+
+# Local Models (HuggingFace cache, FlashRank models)
+models/
+models/hf_cache/
+models/flashrank/
+
+# Evaluation results
+eval_results/
+
+# System files
+.DS_Store
+Thumbs.db
+EXAM_GUIDE.md

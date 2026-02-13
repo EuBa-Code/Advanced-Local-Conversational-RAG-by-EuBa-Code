@@ -1,0 +1,29 @@
+[project]
+name = "rag-prog"
+version = "0.1.0"
+description = "Advanced Local Conversational RAG with Multi-Query, Hybrid Search, and Reranking"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain>=0.3.0",
+    "langchain-core>=0.3.0",
+    "langchain-community>=0.3.0",
+    "langchain-text-splitters",
+    "python-dotenv>=1.2.0",
+    "pypdf>=6.0.0",
+    "filetype",
+    "langchain-qdrant>=1.1.0",
+    "qdrant-client>=1.10.0",
+    "flashrank>=0.2.0",
+    "langchain-google-genai>=2.0.0",
+    "langchain-openai",
+    "google-generativeai",
+    "langchain-huggingface>=0.1.0",
+    "transformers>=4.45.0",
+    "sentence-transformers>=3.0.0",
+    "accelerate>=0.34.0",
+    "ragas>=0.4.0",
+    "fastembed",
+    "torch",
+    "streamlit",
+]

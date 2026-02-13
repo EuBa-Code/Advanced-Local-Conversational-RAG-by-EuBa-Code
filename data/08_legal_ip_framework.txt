@@ -1,0 +1,18 @@
+LEGAL FRAMEWORK AND INTELLECTUAL PROPERTY AT AGS
+
+1. PATENT MANAGEMENT AND PHILOSOPHY
+AGS holds over 450 active patents in the fields of quantum computing, hardware-accelerated neural networks, and homomorphic encryption. However, we take a "Pragmatic Openness" approach. While we protect our core hardware innovations, our "Open-Core" policy mandates that foundational software algorithms and communication protocols are released under the Apache 2.0 license to foster community innovation and ensure that we don't create "vendor lock-in."
+
+2. GLOBAL COMPLIANCE (GDPR, CCPA, PIPL)
+Our 'AetherPrivacy' system is an automated compliance engine integrated into our CI/CD pipelines. It ensures that every new feature is "Private by Design."
+- Right to be Forgotten: Every user deletion request is processed in under 2 hours via an automated workflow that scrubs references in transactional databases, vector stores, and even immutable backups using cryptographic erasure (shredding the keys for that specific user's data).
+- Data Localization: To comply with strict sovereignty laws, EU citizen data never leaves the borders of the Union. This is enforced by physical database partitioning and automated "Geo-Fencing" of workloads managed by our Legal CoE.
+
+3. COMMERCIAL LICENSING LEVELS
+We offer three distinct tiers for the Nexus engine to cater to different needs:
+- Community: Free for non-profit organizations, students, and academic research. This version is limited to single-node deployments but includes the full core API.
+- Enterprise: Designed for large-scale commercial use. Includes 24/7 technical support, a 99.99% uptime SLA, and advanced monitoring tools via AetherControl.
+- Sovereign: A specialized tier for national governments and highly regulated industries (defense, healthcare). It offers full source-code audits, "air-gapped" installation options, and customized cryptographic modules.
+
+4. DEFENSIVE IP POSITION
+AGS takes a strictly defensive stance on patents. We are active members of the 'Open Invention Network' (OIN) and have pledged never to use our patents offensively against other open-source contributors. We believe that the real value of IP lies in enabling progress, not in litigating against it.

@@ -1,0 +1,24 @@
+GUIDE TO CUSTOMER SUPPORT AND SERVICE LEVEL AGREEMENTS (SLA)
+
+1. SUPPORT TIERS AND ACCESS
+To provide world-class service to our global client base, AGS offers three distinct tiers of support:
+- Tier 1 (Self-Service/AI-First): Our advanced RAG-based portal (AetherHelp) is available 24/7 in 50 languages. It has access to our entire technical documentation, past ticket resolutions, and real-time system status. 80% of common queries are resolved at this level.
+- Tier 2 (Support Engineers): For complex issues that the AI cannot resolve, customers are routed to our global pool of Support Engineers. We guarantee response within 2 hours for medium-priority tickets.
+- Tier 3 (Core Developers): For critical infrastructure bugs or security vulnerabilities, customers get direct access to the product development circles that wrote the code.
+
+2. PRIORITY DEFINITIONS AND RESPONSE TIMES
+We categorize incidents into four priority levels:
+- P0 (Critical): Total outage of the Nexus service or a confirmed data breach. Response time: 15 minutes. Resolution target: < 4 hours.
+- P1 (High): Significant performance degradation (latency > 500ms) or a major feature being unavailable for a large user group. Response time: 1 hour. Resolution target: < 12 hours.
+- P2 (Normal): General technical questions, feature requests, or minor UI bugs. Response time: 24 hours.
+- P3 (Low): Suggestions for future improvements or documentation typos. Response time: 3-5 business days.
+
+3. UPTIME GUARANTEE AND CREDITS
+We guarantee a monthly uptime of 99.99% for our Enterprise and Sovereign clients. If this SLA is not met, AGS provides service credits to the customer according to the following schedule:
+- 99.9% - 99.99% Uptime: 10% Service Credit.
+- 99.0% - 99.9% Uptime: 25% Service Credit.
+- < 99.0% Uptime: 50% Service Credit.
+Uptime is calculated as the percentage of minutes in a month during which the Nexus API is responsive to valid requests.
+
+4. PRODUCT FEEDBACK AND "VOICE OF THE CUSTOMER"
+Support is not just about fixing problems; it’s about improving the product. Every support ticket is tagged with metadata and analyzed by our "Product Quality" team using sentiment analysis and trend clustering. Once a month, the top 10 most frequent pain points are presented directly to the CEO and the Lead Engineers to be prioritized in the following development sprint. This ensures that the user's voice is the primary driver of our roadmap.

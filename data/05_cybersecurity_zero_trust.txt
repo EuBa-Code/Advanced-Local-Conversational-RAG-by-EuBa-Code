@@ -1,0 +1,15 @@
+INFORMATION SECURITY POLICY: THE ZERO TRUST PROTOCOL
+
+1. ACCESS PRINCIPLES
+In the modern threat landscape, the "perimeters" of a network are non-existent. AGS strictly enforces a "Never Trust, Always Verify" model. Network proximity (being on the office Wi-Fi or VPN) does not grant resource access. Every single request—whether internal or external—is authenticated, authorized, and encrypted. This ensures that even if a single device is compromised, the attacker cannot "move laterally" across the network.
+
+2. IDENTITY ACCESS MANAGEMENT (IAM) AND JIT
+Access to sensitive production environments requires hardware security keys (FIDO2/YubiKey). We have eliminated password-based authentication for all critical systems. We implement 'Just-In-Time' (JIT) Provisioning: engineers are granted production access only for the specific duration required to resolve a logged ticket. Once the task is complete or the time window expires, all temporary credentials and certificates are revoked automatically. This reduces the "standing privilege" risk to near zero.
+
+3. ENCRYPTION AND DATA PROTECTION
+- Data at Rest: All storage volumes are encrypted using AES-256-GCM. We utilize an internal Key Management Service (KMS) with 30-day automated key rotation and hardware security modules (HSM) for root key storage.
+- Data in Transit: All internal and external traffic is protected via TLS 1.3. We enforce "Certificate Pinning" on all mobile and edge devices to prevent man-in-the-middle attacks.
+- Quantum Resistance: Recognizing the threat of future quantum computers, we are currently migrating our long-term data archives to post-quantum cryptographic algorithms (Kyber for key exchange and Dilithium for digital signatures).
+
+4. THE "BLACK SWAN" PROTOCOL (DISASTER RECOVERY)
+AGS maintains a "Hot-Warm-Cold" storage strategy. In the event of a total regional datacenter failure, our "Hot" sites in different geographic zones take over traffic within seconds. We also maintain "Cold Sites" in isolated geographic locations like the Swiss Alps and New Zealand. Our Recovery Time Objective (RTO) is 45 minutes, with a Recovery Point Objective (RPO) of less than 5 seconds, achieved through real-time synchronous transaction log replication.

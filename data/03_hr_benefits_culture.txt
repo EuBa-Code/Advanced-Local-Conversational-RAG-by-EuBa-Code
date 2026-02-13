@@ -1,0 +1,16 @@
+EMPLOYEE HANDBOOK: CULTURE, WELFARE, AND GROWTH AT AETHERIA
+
+1. THE "GLOBAL FIRST" PHILOSOPHY
+AGS is a fully remote-first organization. We believe that talent is distributed globally, but opportunity is not. We do not have fixed office hours; success is measured by "Impact KPIs" rather than time logs or physical presence. While we maintain "Hub Centers" in Zurich, Austin, and Singapore for voluntary in-person collaboration, residency is entirely the choice of the employee. Our communication culture is "Async-Default," meaning we favor well-documented internal wikis and tickets over synchronous meetings.
+
+2. COMPENSATION AND EQUITY (LVI MODEL)
+We use the "Labor Value Index" (LVI) to ensure fair and competitive pay. Salaries are benchmarked against the top 10% of the global tech talent market, regardless of the employee's physical location. This ensures that an engineer in Nairobi is compensated at the same rate as one in San Francisco for the same impact.
+- Aether-Units (AU): Every employee receives equity options that vest over a four-year period with a 12-month cliff. AU holders also possess voting rights on specific operational decisions within their respective Impact Circles, fostering a culture of true ownership.
+
+3. BENEFITS AND PROFESSIONAL DEVELOPMENT
+- Wellness Stipend: $3,000 USD annually for mental health services, physical fitness, or ergonomic home-office upgrades. We also provide "Deep Work Fridays," where internal meetings are strictly prohibited to allow for focused development time.
+- Unlimited Learning Budget: Full coverage for technical certifications (AWS, Rust Foundation, etc.), university courses, and international conference attendance. We believe that if you aren't learning, the company isn't growing.
+- Parental Leave: 26 weeks of fully paid leave for all parents, regardless of gender or path to parenthood (including adoption and surrogacy).
+
+4. THE "PULSE" FEEDBACK SYSTEM
+Traditional annual reviews are considered obsolete at AGS. We use 'Pulse', a continuous 360-degree feedback loop integrated into our internal communication tools. Every week, team members exchange anonymous micro-feedback regarding collaboration, technical excellence, and leadership. This data feeds into a dynamic personal growth dashboard, allowing for real-time adjustments in career trajectory and skill development. Promotions are not decided by a single manager but by a "Peer Growth Committee" based on the aggregated Pulse data.

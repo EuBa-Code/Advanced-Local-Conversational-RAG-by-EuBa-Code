@@ -1,0 +1,18 @@
+POST-MORTEM REPORT: PROJECT ZEPHYR (PHASE II - AUTONOMOUS LOGISTICS)
+
+1. PROJECT OBJECTIVES
+Project Zephyr was initiated in early 2024 to automate the delivery of critical medical supplies (vaccines, organs, blood plasma) in congested urban environments. Traditional ground transport is often delayed by traffic density and architectural barriers, which can be fatal in emergency medical scenarios. The goal was to develop a fleet of autonomous aerial vehicles capable of navigating dense cities without human intervention.
+
+2. TECHNICAL CHALLENGES: THE "GPS GHOSTING" PROBLEM
+During the pilot phase in Singapore, the team encountered significant "GPS Ghosting" in areas with high skyscraper density. GPS signals would bounce off glass surfaces, creating multipath interference that caused drones to deviate from their path by up to 10 meters. AGS solved this by developing a proprietary 'Visual SLAM' (Simultaneous Localization and Mapping) algorithm. This allows drones to navigate using stereoscopic cameras and LiDAR sensors, creating a real-time local map and comparing it against a pre-loaded "3D Semantic Mesh" of the city.
+
+3. DRONE ARCHITECTURE (VULCAN-7)
+- Processing Units: NVIDIA Orin for on-board AI inference, allowing the drone to detect and avoid dynamic obstacles like birds, kites, and other drones in less than 50ms.
+- Sensor Suite: 360-degree LiDAR, ultrasonic sensors for low-altitude precision, and thermal imaging for life-sign detection to avoid landing near people.
+- Communication: The 'AetherLink' protocol, utilizing 5G for primary telemetry and Starlink satellite backups for high-altitude transits where cellular coverage is spotty.
+
+4. OUTCOMES AND KEY PERFORMANCE INDICATORS (KPIs)
+- Delivery Time Reduction: 55% average decrease compared to electric delivery vans in city centers.
+- Safety Record: 0.02 incidents per 10,000 flight hours, which exceeds current civil aviation standards for unmanned vehicles.
+- Efficiency: The Vulcan-7 drones utilize regenerative braking during descent to extend their battery life by 12%.
+- Future Iterations: Phase III (scheduled for 2026) will introduce "Dynamic Payload Balancing" to transport unstable biological samples that require precise temperature and motion control, utilizing an internal active-stabilization gimbal.
