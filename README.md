@@ -126,10 +126,5 @@ python src/evaluate.py
 
 ---
 
-## 📄 Documentation for Exam
-For a deep dive into the technical choices and architectural patterns used in this project, please refer to the [EXAM_GUIDE.md](./EXAM_GUIDE.md).
-
----
-
 ## 📜 License
 This project is licensed under the MIT License - see the LICENSE file for details.
