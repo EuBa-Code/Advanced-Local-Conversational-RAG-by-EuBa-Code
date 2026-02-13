@@ -154,3 +154,14 @@ if prompt := st.chat_input("Ask me anything about AGS..."):
 if st.sidebar.button("Clear Conversation"):
     st.session_state.messages = []
     st.rerun()
+
+# ---------------------------------------------------------------------------
+# Shutdown System
+# ---------------------------------------------------------------------------
+st.sidebar.markdown("---")
+if st.sidebar.button("🛑 Exit & Shutdown Server", help="Click here to completely stop the RAG system and free up RAM/CPU."):
+    st.sidebar.error("System shutting down... You can close this tab.")
+    import os
+    import time
+    time.sleep(1) # Give time to show the message
+    os._exit(0)
