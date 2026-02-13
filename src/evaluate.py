@@ -27,7 +27,7 @@ from langchain_core.documents import Document
 # Reranking
 from flashrank import Ranker
 from langchain_community.document_compressors import FlashrankRerank
-from langchain_classic.retrievers import ContextualCompressionRetriever
+from langchain.retrievers import ContextualCompressionRetriever
 
 # RAGAS Imports
 from ragas.llms import llm_factory

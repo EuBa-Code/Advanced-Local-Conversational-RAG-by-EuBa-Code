@@ -6,12 +6,11 @@ from langchain_qdrant import QdrantVectorStore, FastEmbedSparse, RetrievalMode
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents import Document
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
 # Libraries for Reranking and context compression
 from flashrank import Ranker
 from langchain_community.document_compressors import FlashrankRerank
-from langchain_classic.retrievers import ContextualCompressionRetriever
 
 from config import get_settings
 
@@ -55,7 +54,7 @@ def load_system_prompt(filepath) -> str:
         logger.error(f"Error loading prompt: '{filepath}'")
         sys.exit(1)
 
-def condense_question(llm, chat_history, question):
+def condense_question(llm, chat_history: list[BaseMessage], question: str) -> str:
     """
     If there is a history, reformulates the current question to be standalone,
     incorporating context from previous turns.
@@ -156,7 +155,7 @@ def main() -> None:
     qa_chain = rag_prompt | llm_local | StrOutputParser()
 
     # --- CHAT STATE ---
-    chat_history = [] 
+    chat_history: list[BaseMessage] = [] 
 
     logger.info("Setup completed. (Type 'reset' to clear memory)")
     
