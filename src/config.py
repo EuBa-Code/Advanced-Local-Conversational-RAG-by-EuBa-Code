@@ -37,6 +37,7 @@ class Settings:
 
     # --- Local (Ollama & HF) ---
     local_llm_model: str = os.getenv("LOCAL_LLM_MODEL", "llama3.2").strip()
+    eval_llm_model: str = os.getenv("EVAL_LLM_MODEL", "llama3.1:8b").strip()
     local_embeddings_model: str = os.getenv("HF_EMBEDDINGS_MODEL", "sentence-transformers/all-MiniLM-L6-v2").strip() 
     ollama_base_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").strip()
 

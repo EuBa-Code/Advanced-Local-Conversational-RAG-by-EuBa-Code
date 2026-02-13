@@ -212,8 +212,9 @@ async def run_evaluation():
     )
     
     # Use llm_factory to create a RAGAS-compatible Instructor LLM
+    print(f"    Using {settings.eval_llm_model} for scoring (Teacher model)...")
     evaluator_llm = llm_factory(
-        model="llama3.1:8b", 
+        model=settings.eval_llm_model, 
         client=openai_client
     )
     
