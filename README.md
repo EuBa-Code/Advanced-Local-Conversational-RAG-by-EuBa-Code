@@ -32,28 +32,24 @@ graph TD
 
 ## 🌟 Key Features
 
--   **🧠 Conversational Memory**: Managed through a "Condense Question" pipeline, allowing the system to handle follow-up questions effectively.
--   **🔍 Advanced Retrieval (Multi-Query)**: Automatically generates multiple variations of user queries to overcome vocabulary mismatch and improve document recall.
--   **⚡ Hybrid Search**: Combines Dense (Semantic) and Sparse (BM25) search for the highest precision in document retrieval.
--   **🎯 FlashRank Reranking**: Utilizes a lightweight cross-encoder to re-score and prioritize the most relevant documents before generation.
--   **🛡️ Privacy-First (Fully Local)**: Designed to run entirely on-premise using **Ollama** (Llama 3.2) and local HuggingFace embeddings. Zero data leaks, zero API costs.
--   **📊 RAGAS Evaluation**: Includes a pre-configured evaluation suite to measure performance using industry-standard metrics (Faithfulness, Context Precision).
+- **🧠 Conversational Memory**: Managed through a "Condense Question" pipeline for effective context handling.
+- **🔍 Advanced Retrieval (Multi-Query)**: Automatically generates query variations via local LLM to improve recall.
+- **⚡ Hybrid Search**: Combines Dense (Semantic) and Sparse (BM25) search for high precision.
+- **🎯 FlashRank Reranking**: Prioritizes relevant context using lightweight cross-encoders.
+- **🛡️ Resource Management**:
+    - **One-Click Shutdown**: Streamlit UI button to kill the server and free RAM/CPU instantly.
+    - **Proactive GC**: Explicit garbage collection during evaluation to prevent memory pressure.
+- **📊 Professional Evaluation**: "Student-Professor" architecture using RAGAS to measure quality objectively.
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ System Architecture
 
-### 1. Ingestion Pipeline
-- **Parsing**: Loads `.txt` documentation with rich metadata.
-- **Chunking**: Uses `RecursiveCharacterTextSplitter` for semantic coherence.
-- **Vectorization**: Creates both Dense and Sparse embeddings stored in **Qdrant**.
-
-### 2. Inference Pipeline (Chat)
-- **Question Re-writing**: Contextualizes user input based on chat history.
-- **Expansion**: Generates 3+ query variations via local LLM.
-- **Retrieval**: Hybrid search + MMR (Maximum Marginal Relevance).
-- **Refinement**: Re-ranks candidates via **FlashRank**.
-- **Generation**: Responses generated with streaming output and source citations.
+1.  **Ingestion**: `ingest.py` loads documentation, chunks text, and populates **Qdrant**.
+2.  **Retrieval**: Hybrid Search (Dense + Sparse) retrieves candidates.
+3.  **Reranking**: `FlashrankRerank` re-orders candidates for quality.
+4.  **Generation (Student)**: **Llama 3.2** provides fast, context-aware answers.
+5.  **Assessment (Teacher)**: **Llama 3.1 8B** acts as a Judge to verify the quality of generation.
 
 ---
 
@@ -61,68 +57,60 @@ graph TD
 
 - **Framework**: [LangChain](https://www.langchain.com/)
 - **Vector DB**: [Qdrant](https://qdrant.tech/)
-- **LLM Engine**: [Ollama](https://ollama.com/) (Llama 3.2)
+- **LLM Engine**: [Ollama](https://ollama.com/) (Llama 3.2 & 3.1 8B)
 - **Embeddings**: HuggingFace (`all-MiniLM-L6-v2`) & FastEmbed (BM25)
 - **Reranker**: [FlashRank](https://github.com/prithvida/flashrank)
 - **Evaluation**: [RAGAS](https://docs.ragas.io/)
+- **Package Manager**: [uv](https://github.com/astral-sh/uv)
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Setup & Installation
 
-### 1. Prerequisites
-- Python 3.12+
-- [Ollama](https://ollama.com/) installed and running.
-- [Qdrant](https://qdrant.tech/documentation/quick-start/) (Local instance or Cloud).
-
-### 2. Setup
-Clone the repository and install dependencies using [uv](https://github.com/astral-sh/uv):
-```bash
-uv sync
-```
-*Alternatively, using standard pip:*
-```bash
-pip install .
-```
-
-### 3. Environment Variables
-Copy the template and fill in your details:
-```bash
-cp .env.example .env
-```
-
-### 4. Pull Local Model
-```bash
-ollama pull llama3.2
-```
+1.  Install [uv](https://github.com/astral-sh/uv).
+2.  Install dependencies:
+    ```bash
+    uv sync
+    ```
+3.  Configure your `.env` following `.env.example`.
+4.  Pull Local Models:
+    ```bash
+    ollama pull llama3.2    # Student (Fast Generation)
+    ollama pull llama3.1:8b # Teacher (Reliable Evaluation)
+    ```
 
 ---
 
 ## 🚀 Usage
 
-### 1. Ingest Documentation
-Place your `.txt` files in the `data/` directory, then run:
+### 1. Ingest Data
 ```bash
-python src/ingest.py
+uv run python src/ingest.py
 ```
 
-### 2. Start Chatting (CLI)
-Launch the conversational interface in your terminal:
+### 2. Chat Web UI (Streamlit)
 ```bash
-python src/app.py
+uv run streamlit run src/streamlit_app.py
+```
+*Note: Use the **"Exit & Shutdown"** button in the sidebar to release all RAM/CPU when finished.*
+
+### 3. Run Evaluation (Student-Professor Model)
+```bash
+uv run python src/evaluate.py
 ```
 
-### 3. Launch Web Interface (Streamlit)
-For a modern, user-friendly experience:
-```bash
-streamlit run src/streamlit_app.py
-```
+---
 
-### 4. Run Evaluation
-Measure system quality with RAGAS:
-```bash
-python src/evaluate.py
-```
+## 📊 Evaluation Methodology
+
+Developed for rigorous quality control:
+- **Student**: `llama3.2` (3B) - Fast and lightweight for real-time interaction.
+- **Teacher**: `llama3.1:8b` - High-precision reasoning used to score the Student's responses.
+
+**Metrics:**
+- **Faithfulness**: Verifies if the answer is grounded in the retrieved documents (anti-hallucination).
+- **Context Precision**: Evaluates the quality of the document retrieval phase.
+
 
 ---
 
