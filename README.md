@@ -1,4 +1,4 @@
-# 🚀 Advanced Local Conversational RAG
+# Advanced Local Conversational RAG
 
 An enterprise-grade, fully local Retrieval-Augmented Generation (RAG) system built with **LangChain**, **Qdrant**, and **Ollama**. This project implements advanced retrieval techniques to provide highly accurate, context-aware answers from private documentation.
 
@@ -81,7 +81,7 @@ graph TD
 
 ---
 
-## 🚀 Usage
+## Usage
 
 ### 1. Ingest Data
 ```bash
