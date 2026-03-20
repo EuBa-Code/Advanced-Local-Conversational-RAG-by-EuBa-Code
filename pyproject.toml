@@ -26,4 +26,5 @@ dependencies = [
     "fastembed",
     "torch",
     "streamlit",
+    "pytest>=8.0",
 ]
