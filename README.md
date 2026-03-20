@@ -40,7 +40,7 @@ Most RAG implementations rely on external APIs (OpenAI, Anthropic, Google) for e
 
 This system keeps everything on-premise:
 - **LLM inference** runs on Ollama (Llama 3.2) — no API calls for generation
-- **Embeddings** are computed locally via HuggingFace (`all-MiniLM-L6-v2`) — your documents are never sent to external embedding services
+- **Embeddings** are computed locally via HuggingFace (`paraphrase-multilingual-MiniLM-L12-v2`) — your documents are never sent to external embedding services
 - **Reranking** uses a local ONNX model (FlashRank TinyBERT) — no cloud cross-encoders
 - **Vector storage** can run locally via Docker (Qdrant) — your vectors stay on your infrastructure
 
@@ -55,6 +55,7 @@ The only network traffic is between your machine and your own Qdrant instance.
 - **Hybrid Search** — combines dense (semantic) and sparse (BM25) retrieval in Qdrant
 - **FlashRank Reranking** — re-orders candidates with a lightweight cross-encoder (TinyBERT)
 - **RAGAS Evaluation** — automated quality scoring with Faithfulness and Context Precision metrics
+- **Multilingual** — uses cross-language embeddings, so you can query in any language regardless of document language
 - **Dual interface** — CLI (`app.py`) and web UI (`streamlit_app.py`)
 
 ---
@@ -66,7 +67,7 @@ The only network traffic is between your machine and your own Qdrant instance.
 | Framework | [LangChain](https://www.langchain.com/) |
 | Vector DB | [Qdrant](https://qdrant.tech/) |
 | LLM | [Ollama](https://ollama.com/) (Llama 3.2 gen, Llama 3.1 8B eval) |
-| Embeddings | HuggingFace `all-MiniLM-L6-v2` + FastEmbed BM25 |
+| Embeddings | HuggingFace `paraphrase-multilingual-MiniLM-L12-v2` + FastEmbed BM25 |
 | Reranker | [FlashRank](https://github.com/prithvida/flashrank) |
 | Evaluation | [RAGAS](https://docs.ragas.io/) |
 | Package Manager | [uv](https://github.com/astral-sh/uv) |
