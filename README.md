@@ -1,10 +1,12 @@
 # Advanced Local Conversational RAG
 
-An enterprise-grade, fully local Retrieval-Augmented Generation (RAG) system built with **LangChain**, **Qdrant**, and **Ollama**. This project implements advanced retrieval techniques to provide highly accurate, context-aware answers from private documentation.
+A Retrieval-Augmented Generation system built with LangChain, Qdrant, and Ollama. It combines hybrid search, multi-query expansion, and cross-encoder reranking to answer questions from private documentation.
+
+The system runs primarily on local models (Ollama), but also supports cloud providers (Gemini, OpenRouter) for flexibility.
 
 ---
 
-## 🏗️ Architecture Diagram
+## Architecture
 
 ```mermaid
 graph TD
@@ -30,89 +32,111 @@ graph TD
     end
 ```
 
-## 🌟 Key Features
+## Features
 
-- **🧠 Conversational Memory**: Managed through a "Condense Question" pipeline for effective context handling.
-- **🔍 Advanced Retrieval (Multi-Query)**: Automatically generates query variations via local LLM to improve recall.
-- **⚡ Hybrid Search**: Combines Dense (Semantic) and Sparse (BM25) search for high precision.
-- **🎯 FlashRank Reranking**: Prioritizes relevant context using lightweight cross-encoders.
-- **🛡️ Resource Management**:
-    - **One-Click Shutdown**: Streamlit UI button to kill the server and free RAM/CPU instantly.
-    - **Proactive GC**: Explicit garbage collection during evaluation to prevent memory pressure.
-- **📊 Professional Evaluation**: "Student-Professor" architecture using RAGAS to measure quality objectively.
+- **Conversational Memory** — reformulates follow-up questions into standalone queries using chat history
+- **Multi-Query Expansion** — generates query variations via LLM to improve retrieval recall
+- **Hybrid Search** — combines dense (semantic) and sparse (BM25) retrieval in Qdrant
+- **FlashRank Reranking** — re-orders candidates with a lightweight cross-encoder (TinyBERT)
+- **RAGAS Evaluation** — automated quality scoring with Faithfulness and Context Precision metrics
+- **Dual interface** — CLI (`app.py`) and web UI (`streamlit_app.py`)
 
 ---
 
-## 🏗️ System Architecture
+## Tech Stack
 
-1.  **Ingestion**: `ingest.py` loads documentation, chunks text, and populates **Qdrant**.
-2.  **Retrieval**: Hybrid Search (Dense + Sparse) retrieves candidates.
-3.  **Reranking**: `FlashrankRerank` re-orders candidates for quality.
-4.  **Generation (Student)**: **Llama 3.2** provides fast, context-aware answers.
-5.  **Assessment (Teacher)**: **Llama 3.1 8B** acts as a Judge to verify the quality of generation.
-
----
-
-## 🛠️ Tech Stack
-
-- **Framework**: [LangChain](https://www.langchain.com/)
-- **Vector DB**: [Qdrant](https://qdrant.tech/)
-- **LLM Engine**: [Ollama](https://ollama.com/) (Llama 3.2 & 3.1 8B)
-- **Embeddings**: HuggingFace (`all-MiniLM-L6-v2`) & FastEmbed (BM25)
-- **Reranker**: [FlashRank](https://github.com/prithvida/flashrank)
-- **Evaluation**: [RAGAS](https://docs.ragas.io/)
-- **Package Manager**: [uv](https://github.com/astral-sh/uv)
+| Component | Tool |
+|-----------|------|
+| Framework | [LangChain](https://www.langchain.com/) |
+| Vector DB | [Qdrant](https://qdrant.tech/) |
+| LLM | [Ollama](https://ollama.com/) (Llama 3.2 gen, Llama 3.1 8B eval) |
+| Embeddings | HuggingFace `all-MiniLM-L6-v2` + FastEmbed BM25 |
+| Reranker | [FlashRank](https://github.com/prithvida/flashrank) |
+| Evaluation | [RAGAS](https://docs.ragas.io/) |
+| Package Manager | [uv](https://github.com/astral-sh/uv) |
 
 ---
 
-## ⚙️ Setup & Installation
+## Prerequisites
 
-1.  Install [uv](https://github.com/astral-sh/uv).
-2.  Install dependencies:
+- Python >= 3.12
+- [uv](https://github.com/astral-sh/uv) installed
+- [Ollama](https://ollama.com/) running locally (`ollama serve`)
+- A Qdrant instance (cloud or local via Docker)
+
+## Setup
+
+1. Install dependencies:
     ```bash
     uv sync
     ```
-3.  Configure your `.env` following `.env.example`.
-4.  Pull Local Models:
+
+2. Copy `.env.example` to `.env` and fill in your values:
+    - `QDRANT_URL` and `QDRANT_API_KEY` are **required**
+    - LLM provider keys are optional if using Ollama locally
+
+3. Pull the local models:
     ```bash
-    ollama pull llama3.2    # Student (Fast Generation)
-    ollama pull llama3.1:8b # Teacher (Reliable Evaluation)
+    ollama pull llama3.2       # generation
+    ollama pull llama3.1:8b    # evaluation judge
+    ```
+
+4. Verify Ollama is running:
+    ```bash
+    ollama list
     ```
 
 ---
 
 ## Usage
 
-### 1. Ingest Data
+### Ingest documents
 ```bash
 uv run python src/ingest.py
 ```
 
-### 2. Chat Web UI (Streamlit)
+### Chat (Web UI)
 ```bash
 uv run streamlit run src/streamlit_app.py
 ```
-*Note: Use the **"Exit & Shutdown"** button in the sidebar to release all RAM/CPU when finished.*
 
-### 3. Run Evaluation (Student-Professor Model)
+### Chat (CLI)
+```bash
+uv run python src/app.py
+```
+
+### Run evaluation
 ```bash
 uv run python src/evaluate.py
 ```
 
 ---
 
-## 📊 Evaluation Methodology
+## Evaluation
 
-Developed for rigorous quality control:
-- **Student**: `llama3.2` (3B) - Fast and lightweight for real-time interaction.
-- **Teacher**: `llama3.1:8b` - High-precision reasoning used to score the Student's responses.
+The system uses a "Student-Teacher" approach:
+- **Student** (`llama3.2`): generates answers during normal usage
+- **Teacher** (`llama3.1:8b`): scores the student's responses during evaluation
 
-**Metrics:**
-- **Faithfulness**: Verifies if the answer is grounded in the retrieved documents (anti-hallucination).
-- **Context Precision**: Evaluates the quality of the document retrieval phase.
+Metrics:
+- **Faithfulness**: is the answer grounded in the retrieved documents?
+- **Context Precision**: were the retrieved documents actually relevant?
 
+Results are saved as JSON in `eval_results/`.
 
 ---
 
-## 📜 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `ConnectionRefusedError` on Ollama | Make sure `ollama serve` is running |
+| Qdrant connection fails | Check `QDRANT_URL` and `QDRANT_API_KEY` in `.env` |
+| Slow first query | Normal — models are loaded into memory on first use |
+| Out of memory | Use smaller models or reduce `RETRIEVER_K` in `rag_pipeline.py` |
+
+---
+
+## License
+
+MIT License — see the LICENSE file for details.
