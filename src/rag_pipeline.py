@@ -145,7 +145,7 @@ def format_docs(docs: list[Document]) -> str:
         return "No relevant documents found."
 
     return "\n\n".join(
-        f"(Source: {d.metadata.get('source', 'unknown')})\n{d.page_content.strip()}"
+        f"[{Path(d.metadata.get('source', 'unknown')).stem}]\n{d.page_content.strip()}"
         for d in docs
     )
 
