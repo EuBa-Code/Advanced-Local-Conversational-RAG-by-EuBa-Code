@@ -1,8 +1,10 @@
 # Advanced Local Conversational RAG
 
-A Retrieval-Augmented Generation system built with LangChain, Qdrant, and Ollama. It combines hybrid search, multi-query expansion, and cross-encoder reranking to answer questions from private documentation.
+A Retrieval-Augmented Generation system designed around **data sovereignty and privacy**. Every component of the pipeline — LLM inference, embeddings, reranking — runs locally on your hardware through Ollama and HuggingFace models. No document content, no query, no conversation ever leaves your machine.
 
-The system runs primarily on local models (Ollama), but also supports cloud providers (Gemini, OpenRouter) for flexibility.
+This matters when you're working with internal company documents, personal data, legal files, or anything you wouldn't paste into a third-party API. Traditional RAG setups send your private chunks to external LLM providers for embedding and generation. This system doesn't.
+
+The architecture combines hybrid search, multi-query expansion, and cross-encoder reranking to maintain retrieval quality without relying on cloud APIs. Cloud providers (Gemini, OpenRouter) are available as optional fallbacks, but the default configuration is fully local and self-contained.
 
 ---
 
@@ -31,6 +33,20 @@ graph TD
         O --> P[Final Answer]
     end
 ```
+
+## Why Local?
+
+Most RAG implementations rely on external APIs (OpenAI, Anthropic, Google) for embeddings and generation. That means every document chunk you index and every question you ask gets sent to third-party servers. For many use cases — corporate knowledge bases, HR policies, legal contracts, medical records, financial data — that's a non-starter.
+
+This system keeps everything on-premise:
+- **LLM inference** runs on Ollama (Llama 3.2) — no API calls for generation
+- **Embeddings** are computed locally via HuggingFace (`all-MiniLM-L6-v2`) — your documents are never sent to external embedding services
+- **Reranking** uses a local ONNX model (FlashRank TinyBERT) — no cloud cross-encoders
+- **Vector storage** can run locally via Docker (Qdrant) — your vectors stay on your infrastructure
+
+The only network traffic is between your machine and your own Qdrant instance.
+
+---
 
 ## Features
 
