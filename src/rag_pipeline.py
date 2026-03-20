@@ -19,7 +19,7 @@ RERANKER_MODEL = "ms-marco-TinyBERT-L-2-v2"
 RERANKER_CACHE = "models/flashrank"
 RETRIEVER_K = 6
 RETRIEVER_FETCH_K = 20
-RERANKER_TOP_N = 4
+RERANKER_TOP_N = 6
 MAX_QUERIES = 4
 HISTORY_WINDOW = 6
 
@@ -85,20 +85,28 @@ def condense_question(llm, chat_history, question: str) -> str:
         return question
 
 
+def _is_valid_query(text: str) -> bool:
+    """Filter out LLM preamble/meta-text that isn't an actual query."""
+    lower = text.lower()
+    bad_prefixes = ("here are", "sure", "of course", "i'd be", "the following", "below")
+    return len(text) > 5 and not any(lower.startswith(p) for p in bad_prefixes)
+
+
 def generate_multi_queries(llm, query: str) -> list[str]:
     """Generate query variations to improve retrieval recall."""
     prompt = ChatPromptTemplate.from_template(
-        "You are an AI assistant expert in information retrieval.\n"
-        "Generate 3 different versions of the following user question to improve retrieval in a vector database.\n"
-        "The variations should cover different aspects or terminologies but maintain the same intent.\n"
-        "Return ONLY the 3 questions separated by a comma.\n"
-        "Original Question: {question}"
+        "Generate exactly 3 search queries that are variations of the following question. "
+        "Each variation must keep all specific names, terms, and numbers from the original. "
+        "Only change the phrasing and add synonyms around those key terms. "
+        "Output ONLY the 3 queries, one per line. No numbering, no preamble.\n\n"
+        "Question: {question}"
     )
     chain = prompt | llm | StrOutputParser()
 
     try:
         response = chain.invoke({"question": query})
-        queries = [q.strip() for q in response.replace("\n", ",").split(",") if q.strip()]
+        lines = [q.strip().lstrip("0123456789.-) ") for q in response.split("\n") if q.strip()]
+        queries = [q for q in lines if _is_valid_query(q)]
         if query not in queries:
             queries.insert(0, query)
         return queries[:MAX_QUERIES]
